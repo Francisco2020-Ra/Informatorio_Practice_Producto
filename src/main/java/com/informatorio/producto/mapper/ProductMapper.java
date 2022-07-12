@@ -25,6 +25,7 @@ public class ProductMapper {
                 .id(productEntity.getId())
                 .name(productEntity.getName())
                 .description(productEntity.getDescription())
+                .unitPrice(productEntity.getUnitPrice())
                 .build();
     }
 
