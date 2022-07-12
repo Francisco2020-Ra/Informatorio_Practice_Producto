@@ -16,6 +16,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.*;
@@ -53,6 +56,25 @@ class ProductControllerTest {
                         .content(objectMapper.writeValueAsString(productEntity(1L))))
                 .andExpect(jsonPath("$.name", is("Coca Cola")))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+    }
+
+    @Test
+    void when_getAllProduct_then_returnListProduct() throws Exception {
+        List<ProductEntity> productEntityList = Arrays.asList(
+                productEntity(1L),
+                productEntity(2L),
+                productEntity(3L));
+
+        when(productRepository.findAll()).thenReturn(productEntityList);
+
+        mockMvc.perform(
+                get("/product")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .contentType(objectMapper.writeValueAsString(productEntityList))
+        )
+                .andExpect(jsonPath("$.[0].id", is(1)))
+                .andExpect(jsonPath("$.[1].id", is(2)))
+                .andExpect(jsonPath("$.[2].id", is(3)));
     }
 
     private ProductEntity productEntity(Long id){

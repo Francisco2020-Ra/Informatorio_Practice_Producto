@@ -4,6 +4,11 @@ import com.informatorio.producto.dto.ProductDTO;
 import com.informatorio.producto.entity.ProductEntity;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
+
 @Component
 public class ProductMapper {
 
@@ -21,5 +26,11 @@ public class ProductMapper {
                 .name(productEntity.getName())
                 .description(productEntity.getDescription())
                 .build();
+    }
+
+    public List<ProductDTO> toListProductDTO(List<ProductEntity> listProductEntity){
+        return listProductEntity.stream()
+                .map(this::toDTO)
+                .collect(toList());
     }
 }

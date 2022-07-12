@@ -7,6 +7,8 @@ import com.informatorio.producto.repository.ProductRepository;
 import com.informatorio.producto.service.ProductService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ProductServiceImpl implements ProductService {
 
@@ -20,13 +22,22 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductEntity addProduct(ProductDTO productDTO) {
+    public ProductDTO addProduct(ProductDTO productDTO) {
         ProductEntity productEntity = productMapper.toEntity(productDTO);
-        return productRepository.save(productEntity);
+        ProductEntity productEntity1 = productRepository.save(productEntity);
+        return productMapper.toDTO(productEntity1);
     }
 
     @Override
-    public ProductEntity getProductId(Long id) {
-        return productRepository.findById(id).get();
+    public ProductDTO getProductId(Long id) {
+        ProductEntity productEntity = productRepository.findById(id).get();
+        return productMapper.toDTO(productEntity);
+    }
+
+    @Override
+    public List<ProductDTO> getAllProduct() {
+        List<ProductEntity> listProductEntity = productRepository.findAll();
+        List<ProductDTO> listProductDTO = productMapper.toListProductDTO(listProductEntity);
+        return listProductDTO;
     }
 }
