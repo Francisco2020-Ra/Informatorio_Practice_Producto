@@ -77,6 +77,16 @@ class ProductControllerTest {
                 .andExpect(jsonPath("$.[2].id", is(3)));
     }
 
+    @Test
+    void when_updateProduct_then_updateProduct() throws Exception {
+        when(productRepository.findById(1L)).thenReturn(Optional.of(productEntity(1L)));
+        when(productRepository.save(productEntity(1L))).thenReturn(productEntity(1L));
+
+        mockMvc.perform(put("/product/1", productDTO())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(productEntity(1L))))
+                .andExpect(jsonPath("$.id", is(1)));
+    }
     private ProductEntity productEntity(Long id){
         return ProductEntity.builder()
                 .id(id)
