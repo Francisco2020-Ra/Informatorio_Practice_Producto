@@ -24,4 +24,9 @@ public class ProductServiceImpl implements ProductService {
         ProductEntity productEntity = productMapper.toEntity(productDTO);
         return productRepository.save(productEntity);
     }
+
+    @Override
+    public ProductEntity getProductId(Long id) {
+        return productRepository.findById(id).get();
+    }
 }

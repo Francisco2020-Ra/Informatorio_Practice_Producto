@@ -1,5 +1,6 @@
 package com.informatorio.producto.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.informatorio.producto.dto.ProductDTO;
 import com.informatorio.producto.entity.ProductEntity;
@@ -14,6 +15,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.Optional;
 
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.*;
@@ -36,6 +39,16 @@ class ProductControllerTest {
         when(productRepository.save(productEntity(null))).thenReturn(productEntity(1L));
 
         mockMvc.perform(post("/product")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(productEntity(1L))))
+                .andExpect(jsonPath("$.name", is("Coca Cola")))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+    }
+    @Test
+    void when_receiveAIdProduct_then_returnPrduct() throws Exception {
+        when(productRepository.findById(1L)).thenReturn(Optional.of(productEntity(1L)));
+
+        mockMvc.perform(get("/product/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(productEntity(1L))))
                 .andExpect(jsonPath("$.name", is("Coca Cola")))

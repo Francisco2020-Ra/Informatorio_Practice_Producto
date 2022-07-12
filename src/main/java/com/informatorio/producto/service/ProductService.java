@@ -6,4 +6,6 @@ import com.informatorio.producto.entity.ProductEntity;
 public interface ProductService {
 
     ProductEntity addProduct(ProductDTO productDTO);
+
+    ProductEntity getProductId(Long id);
 }
