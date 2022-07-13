@@ -8,8 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.jws.WebResult;
-
 @RestController
 @RequestMapping("/product")
 public class ProductController {
@@ -40,5 +38,10 @@ public class ProductController {
         return new ResponseEntity<>(productService.updateProduct(id, productDTO), HttpStatus.OK);
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteProductId(@PathVariable Long id) throws ResourceNotFoundException {
+        productService.deleteProductId(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 
 }

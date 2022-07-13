@@ -1,11 +1,10 @@
 package com.informatorio.producto.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.informatorio.producto.dto.ProductDTO;
 import com.informatorio.producto.entity.ProductEntity;
+import com.informatorio.producto.exception.ResourceNotFoundException;
 import com.informatorio.producto.repository.ProductRepository;
-import com.informatorio.producto.service.ProductService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,12 +15,13 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -87,6 +87,39 @@ class ProductControllerTest {
                 .content(objectMapper.writeValueAsString(productEntity(1L))))
                 .andExpect(jsonPath("$.id", is(1)));
     }
+
+    @Test
+    void when_updateProductNonExistent_then_resourceNotFoundException() {
+        Throwable exception = assertThrows(
+            ResourceNotFoundException.class,
+            () -> {
+                when(productRepository.findById(1L)).thenReturn(Optional.empty());
+                mockMvc.perform(put("/product/{id}", 1L)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(productDTO())));
+            }
+        );
+        assertEquals("Not found Product id: 1", exception.getMessage());
+    }
+
+    @Test
+    void when_deletProductById_then_responseNoContent() throws Exception {
+        when(productRepository.findById(1L)).thenReturn(Optional.of(productEntity(1L)));
+        mockMvc.perform(delete("/product/1"))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void when_deletProductByIdNonExistent_then_resourceNotFoundException(){
+        Throwable exception = assertThrows(
+                ResourceNotFoundException.class,
+                () -> {
+                    when(productRepository.findById(1L)).thenReturn(Optional.empty());
+                    mockMvc.perform(delete("/product/{id}", 1L));
+                }
+        );
+        assertEquals("Not found Product id: 1", exception.getMessage());    }
+
     private ProductEntity productEntity(Long id){
         return ProductEntity.builder()
                 .id(id)

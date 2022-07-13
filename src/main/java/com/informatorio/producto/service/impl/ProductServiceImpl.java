@@ -6,7 +6,6 @@ import com.informatorio.producto.exception.ResourceNotFoundException;
 import com.informatorio.producto.mapper.ProductMapper;
 import com.informatorio.producto.repository.ProductRepository;
 import com.informatorio.producto.service.ProductService;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -52,5 +51,11 @@ public class ProductServiceImpl implements ProductService {
         ProductEntity productEntity1 = productRepository.save(productEntity);
 
         return productMapper.toDTO(productEntity1);
+    }
+
+    @Override
+    public void deleteProductId(Long id) throws ResourceNotFoundException {
+        productRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Not found Product id: " + id));
+        productRepository.deleteById(id);
     }
 }

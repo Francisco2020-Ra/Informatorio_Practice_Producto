@@ -1,8 +1,8 @@
 package com.informatorio.producto.exception;
 
-import java.io.IOException;
+import org.springframework.web.util.NestedServletException;
 
-public class ResourceNotFoundException extends IOException {
+public class ResourceNotFoundException extends NestedServletException {
     public ResourceNotFoundException(String messagge){
         super(messagge);
     }
